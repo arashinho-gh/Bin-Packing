@@ -3,8 +3,8 @@ from os import listdir
 from os.path import isfile, join, basename
 from macpacking.algorithms.online import NextFit
 from macpacking.reader import BinppReader
-
-
+from macpacking.reader import JburkardtReader
+from tests.test_reader import test_binpp_reader
 # We consider:
 #   - 500 objects (N4)
 #   - bin capacity of 120 (C2)
@@ -14,8 +14,8 @@ CASES = './_datasets/binpp/N4C2W2'
 
 def main():
     '''Example of benchmark code'''
-    cases = list_case_files(CASES)
-    run_bench(cases)
+    # cases = list_case_files(CASES)
+    # run_bench(cases) 
 
 
 def list_case_files(dir: str) -> list[str]:

@@ -8,9 +8,15 @@ class BinPacker(ABC):
 
 
 class Online(BinPacker):
-
+    
+    def __init__(self) -> None:
+        super().__init__()
+        self.num_of_compares = self.num_of_bins_created = self.num_of_times_checked_bins = 0
+        
     def __call__(self, ws: WeightStream):
         capacity, stream = ws
+        self.num_of_compares = self.num_of_bins_created = self.num_of_times_checked_bins = 0
+
         return self._process(capacity, stream)
 
     @abstractmethod
@@ -20,8 +26,14 @@ class Online(BinPacker):
 
 class Offline(BinPacker):
 
+    def __init__(self) -> None:
+        super().__init__()
+        self.num_of_compares = self.num_of_bins_created = self.num_of_times_checked_bins = 0
+
     def __call__(self, ws: WeightSet):
         capacity, weights = ws
+        self.num_of_compares = self.num_of_bins_created = self.num_of_times_checked_bins = 0
+
         return self._process(capacity, weights)
 
     @abstractmethod
