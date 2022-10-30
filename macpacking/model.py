@@ -18,6 +18,8 @@ class Online(BinPacker):
         
     def __call__(self, ws: WeightStream):
         capacity, stream = ws
+        self.num_of_compares = self.num_of_bins_created = self.num_of_times_checked_bins = 0
+
         return self._process(capacity, stream)
 
     @abstractmethod
@@ -32,6 +34,8 @@ class Offline(BinPacker):
 
     def __call__(self, ws: WeightSet):
         capacity, weights = ws
+        self.num_of_compares = self.num_of_bins_created = self.num_of_times_checked_bins = 0
+
         return self._process(capacity, weights)
 
 
