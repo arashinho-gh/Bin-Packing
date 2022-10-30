@@ -1,104 +1,99 @@
 from os import listdir
 from os.path import isfile, join, basename
+from random import shuffle
 from macpacking.algorithms.online import NextFit as NextFit_on, FirstFit as FirstFit_on, BestFit as BestFit_on,WorstFit as WorstFit_on
 from macpacking.algorithms.offline import NextFit as NextFit_of, FirstFit as FirstFit_of,BestFit as BestFit_of,WorstFit as WorstFit_of
 
 from macpacking.reader import BinppReader
+import matplotlib.pyplot as plt
 
-CASES = './_datasets/binpp/N4C2W2'
+# CASES = './_datasets/binpp/N4C2W2'
 
+CASES = ['./_datasets/binpp/N1C1W1', './_datasets/binpp/N2C1W1', './_datasets/binpp/N3C1W1', './_datasets/binpp/N4C1W1']
 
 def main():
     '''Example of benchmark code'''
     cases = list_case_files(CASES)
-    run_bench(cases)
+    run_bench(cases, True)
 
-def list_case_files(dir: str) -> list[str]:
-    return sorted([f'{dir}/{f}' for f in listdir(dir) if isfile(join(dir, f))])
+def list_case_files(dir: any) -> list[str]:
+    lst = []
+    for case in dir:
+        t = [f'{case}/{f}' for f in listdir(case) if isfile(join(case, f))]
+        shuffle(t)
+        lst.append(t[0])
+        lst.append(t[1])
+    return lst
 
+def sortStream(data, new_cap = 0): # take offline input
+    stream = sorted(data[1], reverse = True)
+    if new_cap:
+        cap = new_cap
+    else: 
+        cap = data[0]
+        
+    cap = data[0]
+    def iterator():  
+        for w in stream:
+            yield w  
+    return (cap, iterator())
 
-def run_bench(cases: list[str]):
+def updateCap(data, val):
+    data[0] = val
+    return data
     
-    index = 0
+algos = [NextFit_on(), FirstFit_on(), BestFit_on(), WorstFit_on(), NextFit_of(), FirstFit_of(), BestFit_of(), WorstFit_of()]
+
+def run_bench(cases: list[str], sorted = False):
+    dic = {
+        'Online': {},
+        'Offline': {}
+    }
+    for case_index, case in enumerate(cases):
+        print(f"----------------------- Case({case_index}) -----------------------")
+        print()
+
+        for index, algo in enumerate(algos):
+            data = BinppReader(case)
+            temp = BinppReader(case).offline()
+            cap = temp[0]
+            weights = temp[1]
+            numOfWeights = len(weights)
+            
+            algo_type = None
+            algo_name = algo.__class__.__name__
+            binpacker = algo
+            
+            if index < 4: # online
+                algo_type = 'Online' 
+                data = data.online()
+                
+            else: # offline
+                algo_type = 'Offline' 
+                data = data.offline()
+                
+            solution = binpacker.__call__(data)
+            
+            dic[algo_type][numOfWeights] = dic[algo_type].get(numOfWeights, {})
+            dic[algo_type][numOfWeights][algo_name] = dic[algo_type][numOfWeights].get(algo_name, {})
+            dic[algo_type][numOfWeights][algo_name]['bins-created'] = binpacker.num_of_bins_created
+            dic[algo_type][numOfWeights][algo_name]['bins-checked'] = binpacker.num_of_times_checked_bins
+            dic[algo_type][numOfWeights][algo_name]['compares'] = binpacker.num_of_compares
+
+            '''
+            print(f"----- {algo_name} ({algo_type}) -----")
+            print()
+            print(f"bins: {len(solution)}")
+            print("Number of bins created: ", binpacker.num_of_bins_created)
+            print("Number of times weight is checked with previous bins: ", binpacker.num_of_times_checked_bins)
+            print("Number of compares: ", binpacker.num_of_compares)
+            '''
     
-    for case in cases:
-        data_nf_on = BinppReader(case).online()
-        data_ff_on = BinppReader(case).online()
-        data_bf_on = BinppReader(case).online()
-        data_wf_on = BinppReader(case).online()
+    print(dic['Offline'].keys())
+    plt.plot(list(dic['Offline'].keys()))
+    plt.ylabel('some numbers')
+    plt.show()    
 
-        data_nf_of = BinppReader(case).offline()
-        data_ff_of = BinppReader(case).offline()
-        data_bf_of = BinppReader(case).offline()
-        data_wf_of = BinppReader(case).offline()
-        
-        binpacker_nf_on = NextFit_on()
-        binpacker_ff_on = FirstFit_on()
-        binpacker_bf_on = BestFit_on()
-        binpacker_wf_on = WorstFit_on()
-        
-        binpacker_nf_of = NextFit_of()
-        binpacker_ff_of = FirstFit_of()
-        binpacker_bf_of = BestFit_of()
-        binpacker_wf_of = WorstFit_of()
-        
-        binpacker_nf_on.__call__(data_nf_on)
-        binpacker_ff_on.__call__(data_ff_on)
-        binpacker_bf_on.__call__(data_bf_on)
-        binpacker_wf_on.__call__(data_wf_on)
-        
-        binpacker_nf_of.__call__(data_nf_of)
-        binpacker_ff_of.__call__(data_ff_of)
-        binpacker_bf_of.__call__(data_bf_of)
-        binpacker_wf_of.__call__(data_wf_of)
-        
-        print(f"----------------------- Case({index}) -----------------------")
-        print()
-        print("----------- NextFit -----------")
-        print()
-        print("----- Online -----")
-        print("Number of bins created: ", binpacker_nf_on.num_of_bins_created)
-        print("Number of times weight is checked with previous bins: ", binpacker_nf_on.num_of_times_checked_bins)
-        print("Number of compares: ", binpacker_nf_on.num_of_compares)
-
-        print(f"----------- FirstFit -----------")
-        print("Number of bins created: ", binpacker_ff_on.num_of_bins_created)
-        print("Number of times weight is checked with previous bins: ", binpacker_ff_on.num_of_times_checked_bins)
-        print("Number of compares: ", binpacker_ff_on.num_of_compares)
-
-        print(f"----------- BestFit -----------")
-        print("Number of bins created: ", binpacker_bf_on.num_of_bins_created)
-        print("Number of times weight is checked with previous bins: ", binpacker_bf_on.num_of_times_checked_bins)
-        print("Number of compares: ", binpacker_bf_on.num_of_compares)
-
-        print(f"----------- WorstFit -----------")
-        print("Number of bins created: ", binpacker_wf_on.num_of_bins_created)
-        print("Number of times weight is checked with previous bins: ", binpacker_wf_on.num_of_times_checked_bins)
-        print("Number of compares: ", binpacker_wf_on.num_of_compares)
-        print()
-        print("----- Offline -----")
-        print()
-        print(f"----------- NextFit -----------")
-        print("Number of bins created: ", binpacker_nf_of.num_of_bins_created)
-        print("Number of times weight is checked with previous bins: ", binpacker_nf_of.num_of_times_checked_bins)
-        print("Number of compares: ", binpacker_nf_of.num_of_compares)
-
-        print(f"----------- FirstFit -----------")
-        print("Number of bins created: ", binpacker_ff_of.num_of_bins_created)
-        print("Number of times weight is checked with previous bins: ", binpacker_ff_of.num_of_times_checked_bins)
-        print("Number of compares: ", binpacker_ff_of.num_of_compares)
-
-        print(f"----------- BestFit -----------")
-        print("Number of bins created: ", binpacker_bf_of.num_of_bins_created)
-        print("Number of times weight is checked with previous bins: ", binpacker_bf_of.num_of_times_checked_bins)
-        print("Number of compares: ", binpacker_bf_of.num_of_compares)
-
-        print(f"----------- WorstFit -----------")
-        print("Number of bins created: ", binpacker_wf_of.num_of_bins_created)
-        print("Number of times weight is checked with previous bins: ", binpacker_wf_of.num_of_times_checked_bins)
-        print("Number of compares: ", binpacker_wf_of.num_of_compares)
-    
-        index += 1
-        break
 if __name__ == "__main__":
+    
     main()

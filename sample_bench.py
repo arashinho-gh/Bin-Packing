@@ -14,8 +14,8 @@ CASES = './_datasets/binpp/N4C2W2'
 
 def main():
     '''Example of benchmark code'''
-    # cases = list_case_files(CASES)
-    # run_bench(cases) 
+    cases = list_case_files(CASES)[:1]
+    run_bench(cases) 
 
 
 def list_case_files(dir: str) -> list[str]:

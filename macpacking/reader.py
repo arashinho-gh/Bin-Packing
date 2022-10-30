@@ -13,6 +13,7 @@ class DatasetReader(ABC):
         (capacity, weights) = self._load_data_from_disk()
         seed(42)          # always produce the same shuffled result
         shuffle(weights)  # side effect shuffling
+        
         return (capacity, weights)
 
     def online(self) -> WeightStream:

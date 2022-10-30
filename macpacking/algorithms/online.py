@@ -7,6 +7,9 @@ class NextFit(Online):
     
     def __init__(self) -> None:
         super().__init__()
+        self.num_of_bins_created = 0
+        self.num_of_compares = 0
+        self.num_of_times_checked_bins = 0
         
     def _process(self, capacity: int, stream: WeightStream) -> Solution:
         bin_index = 0
@@ -29,6 +32,9 @@ class FirstFit(Online):
     
     def __init__(self) -> None:
         super().__init__()
+        self.num_of_bins_created = 0
+        self.num_of_compares = 0
+        self.num_of_times_checked_bins = 0
         
     def _process(self, capacity: int, stream: WeightStream) -> Solution:
 
@@ -54,6 +60,9 @@ class BestFit(Online):
     
     def __init__(self) -> None:
         super().__init__()
+        self.num_of_bins_created = 0
+        self.num_of_compares = 0
+        self.num_of_times_checked_bins = 0
         
     def _process(self, capacity: int, stream: WeightStream) -> Solution:
         solution = [([],0)]
@@ -83,6 +92,9 @@ class WorstFit(Online):
     
     def __init__(self) -> None:
         super().__init__()
+        self.num_of_bins_created = 0
+        self.num_of_compares = 0
+        self.num_of_times_checked_bins = 0
         
     def _process(self, capacity: int, stream: WeightStream) -> Solution:
         solution = [([],0)]
@@ -112,6 +124,9 @@ class WorstCase(Online):
     
     def __init__(self) -> None:
         super().__init__()
+        self.num_of_bins_created = 0
+        self.num_of_compares = 0
+        self.num_of_times_checked_bins = 0
         
     def _process(self, capacity: int, stream: WeightStream) -> Solution:
         solution = [([],0)]
