@@ -49,7 +49,7 @@ class BinppReader(DatasetReader):
                 weights.append(int(reader.readline()))
             return (capacity, weights)
         
-class JburkardtReader():
+class JburkardtReader(DatasetReader):
     
     def __init__(self, files : list[str]) -> None:
         self.__files = []
@@ -82,5 +82,5 @@ class JburkardtReader():
                 elif data_type == "s":
                     self.data["solution"] = file_data
                 
-        return self.data
+        return (self.data['capacity'], self.data['weights'])
 

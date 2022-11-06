@@ -6,20 +6,18 @@ from macpacking.reader import BinppReader
 from macpacking.reader import JburkardtReader
 from tests.test_reader import test_binpp_reader
 from macpacking.algorithms.online import NextFit as NextFit_on, FirstFit as FirstFit_on, BestFit as BestFit_on,WorstFit as WorstFit_on
-from macpacking.algorithms.offline import NextFit as NextFit_of, FirstFit as FirstFit_of,BestFit as BestFit_of,WorstFit as WorstFit_of
+from macpacking.algorithms.offline import NextFit as NextFit_of, FirstFit as FirstFit_of,BestFit as BestFit_of,WorstFit as WorstFit_of, MultiFit as MF, MNP as mnp
+from macpacking.algorithms.baseline import MultiwayNumberPartitioning as m
+import binpacking as bp
 
-# We consider:
-#   - 500 objects (N4)
-#   - bin capacity of 120 (C2)
-#   - and weight in the [20,100] interval (W2)
-CASES = './_datasets/binpp-hard'
+CASES = './_datasets/binpp/N4C2W2'
 
-algos = [NextFit_on(), FirstFit_on(), BestFit_on(), WorstFit_on(), NextFit_of(), FirstFit_of(), BestFit_of(), WorstFit_of()]
 
 def main():
     '''Example of benchmark code'''
-    cases = list_case_files(CASES)
-    run_bench(cases)
+    cases = list_case_files(CASES)[:1]
+    print(cases)
+    run_bench(cases) 
 
 
 def list_case_files(dir: str) -> list[str]:
@@ -27,26 +25,31 @@ def list_case_files(dir: str) -> list[str]:
 
 
 def run_bench(cases: list[str]):
-    runner = pyperf.Runner()
-    for case_index, case in enumerate(cases):
-        print(f"===== Case {case_index} ======")
-        for index, algo in enumerate(algos):
-            
-            data = BinppReader(case)
-            algo_type = None
-            algo_name = algo.__class__.__name__
-            binpacker = algo
-            
-            if index < 4: # online
-                algo_type = 'Online' 
-                data = data.online()
-                
-            else: # offline
-                algo_type = 'Offline' 
-                data = data.offline()
-                
-            solution = binpacker.__call__(data)
-            print(f"{algo_name} - ({algo_type}) : {len(solution)}")
+    for case in cases:
+        name = basename(case)
+        data = BinppReader(case).offline()
+        binpacker = MF()
+        # data = (5, data[1])
+        sol = binpacker(data)
+        arr = []
+        for i in sol:
+            arr.append(i[1])
+        print(set(arr), len(arr))
+        print("-----------")
+        binpacker = mnp()
+        sol3 = binpacker(data)
+        arr = []
+        for i in sol3:
+            arr.append(i[1])
+        print(set(arr), len(arr))
+        print("-----------")
 
+        sol2 = m()
+        print(data[0])
+        t = (sol2._process(data[0],data[1]))
+        ans = []
+        for i in t:
+            ans.append(sum(i))
+        print(set(ans), len(ans))
 if __name__ == "__main__":
     main()

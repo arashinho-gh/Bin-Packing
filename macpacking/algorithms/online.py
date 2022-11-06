@@ -136,3 +136,6 @@ class WorstCase(Online):
             solution[index] = ([w], w)
             index += 1
 
+
+               
+                
