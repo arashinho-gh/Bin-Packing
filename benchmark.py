@@ -1,7 +1,7 @@
 import pyperf, random
 from typing import TypedDict
 from macpacking.model import Online, Offline
-from macpacking.reader import BinppReader, JburkardtReader
+from macpacking.reader import BinppReader, JburkardtReader, Normalized_reading
 
 class SpaceElement(TypedDict):
     name: str

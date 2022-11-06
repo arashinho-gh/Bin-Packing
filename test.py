@@ -6,7 +6,7 @@ from macpacking.reader import BinppReader
 from macpacking.reader import JburkardtReader
 from tests.test_reader import test_binpp_reader
 from macpacking.algorithms.online import NextFit as NextFit_on, FirstFit as FirstFit_on, BestFit as BestFit_on,WorstFit as WorstFit_on
-from macpacking.algorithms.offline import NextFit as NextFit_of, FirstFit as FirstFit_of,BestFit as BestFit_of,WorstFit as WorstFit_of, MultiFit as MF, MNP as mnp
+from macpacking.algorithms.offline import NextFit as NextFit_of, FirstFit as FirstFit_of,BestFit as BestFit_of,WorstFit as WorstFit_of, MultiFit as MF, LargestSum as mnp
 from macpacking.algorithms.baseline import MultiwayNumberPartitioning as m
 import binpacking as bp
 

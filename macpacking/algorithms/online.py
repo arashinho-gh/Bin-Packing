@@ -1,6 +1,5 @@
-import math, heapq
-from msilib.schema import Class
-from .. import Solution, WeightStream
+import math
+from .. import Solution, WeightStream, NomralizedWeightSet
 from ..model import Online
 
 class NextFit(Online):
@@ -137,5 +136,84 @@ class WorstCase(Online):
             index += 1
 
 
-               
-                
+class RefinedFirstFit(Online):
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.A=[]
+        self.B=[]
+        self.C=[]
+        self.D=[]
+        self.num_of_bins_created = 0
+        self.num_of_compares = 0
+        self.num_of_times_checked_bins = 0
+    
+    def compare(self,capacity, i):
+        fit = 0
+        """ check if the value will fit in the A class"""
+        if len(self.A) > 1 and fit==0:
+            for k in self.A:
+                self.num_of_compares += 1
+                self.num_of_times_checked_bins +=1
+                if sum(k) + i[0] <= capacity:
+                    k.append(i[0])
+                    fit += 1
+                    break
+        """ check if the value will fit in the B class"""
+        if len(self.B) > 1 and fit==0:
+            for k in self.B:
+                self.num_of_compares += 1
+                self.num_of_times_checked_bins +=1
+                if sum(k) + i[0] <= capacity:
+                    k.append(i[0])
+                    fit += 1
+                    break
+        """ check if the value will fit in the C class"""
+        if len(self.C) > 1 and fit==0:
+            for k in self.C:
+                self.num_of_compares += 1
+                self.num_of_times_checked_bins +=1
+                if sum(k) + i[0] <= capacity:
+                    k.append(i[0])
+                    fit += 1
+                    break
+        """ check if the value will fit in the D class"""
+        if len(self.D) > 1 and fit==0:
+            for k in self.D:
+                self.num_of_compares += 1
+                self.num_of_times_checked_bins +=1
+                if sum(k) + i[0] <= capacity:
+                    k.append(i[0])
+                    fit += 1
+                    break
+        return fit
+        
+    def _process(self, capacity: int, stream: NomralizedWeightSet) -> Solution:
+        solution = [([],0)]
+        for i in stream:
+            ''' compare the weight to each heurestic and place it its corresponding class'''
+            if i[1] == "A":
+                fit = self.compare(capacity, i)
+                if fit == 0:
+                    self.A.append([i[0]])
+                    self.num_of_bins_created += 1
+            elif i[1] == "B":
+                fit = self.compare(capacity, i)
+                if fit == 0:
+                    self.B.append([i[0]])
+                    self.num_of_bins_created += 1
+            elif i[1] == "C":
+                fit = self.compare(capacity, i)
+                if fit == 0:
+                    self.D.append([i[0]])
+                    self.num_of_bins_created += 1
+            elif i[1] == "D":
+                fit = self.compare(capacity, i)
+                if fit == 0:
+                    self.D.append([i[0]])
+                    self.num_of_bins_created += 1
+                    
+        data=self.A+self.B+self.C+self.D
+        for k in range(len(data)-1):
+            solution.append((data[k], sum(data[k])))
+        return(solution)
