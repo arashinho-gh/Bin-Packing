@@ -9,8 +9,11 @@ class BinPacker(ABC):
         super().__init__()
         self.num_of_compares = self.num_of_bins_created = self.num_of_times_checked_bins = 0
 
-
-
+    def getMetric(self, metric_name: str):
+        if metric_name == 'num_of_compares': return self.num_of_compares
+        elif metric_name == 'num_of_bins_created': return self.num_of_bins_created
+        elif metric_name == 'num_of_times_checked_bins': return self.num_of_times_checked_bins
+        
 class Online(BinPacker):
     
     def __init__(self) -> None:

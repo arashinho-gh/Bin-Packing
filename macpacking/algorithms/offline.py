@@ -67,13 +67,22 @@ class MultiFit(Offline):
         X = math.inf
         
         k = len(stream)//2
-        for i in range(k):
+        
+        self.num_of_bins_created = n
+        self.num_of_compares = 0
+        self.num_of_times_checked_bins = 0
+
+        for i in range(k + 1):
             c = (L + U)/2
             
             data = (c, stream)
             ffD = FirstFit()
             sol = ffD(data)
-                    
+            
+            self.num_of_bins_created += ffD.num_of_bins_created
+            self.num_of_compares += ffD.num_of_compares
+            self.num_of_times_checked_bins += ffD.num_of_times_checked_bins
+               
             if len(sol) > n:
                 L = c
             elif len(sol) <= n:
@@ -86,9 +95,10 @@ class LargestSum(Offline):
     def __init__(self) -> None:
         super().__init__()
         
-    def _process(self, capacity: int, stream: WeightSet) -> Solution:
+    def _process(self, n: int, stream: WeightSet) -> Solution:
         
-        solution = [([], 0) for i in range(capacity)]
+        solution = [([], 0) for i in range(n)]
+        self.num_of_bins_created = n
         for w in stream:
             pos = self.getSmallestWeightBin(solution)
             _bin, binWeight = solution[pos]
@@ -102,7 +112,9 @@ class LargestSum(Offline):
         i = 0
         smallestWeight = math.inf
         for index, _bin in enumerate(bins):
+            self.num_of_times_checked_bins += 1
             curr_bin, binWeight = _bin
+            self.num_of_compares += 1
             if binWeight < smallestWeight:
                 smallestWeight = binWeight
                 i = index
