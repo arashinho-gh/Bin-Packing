@@ -2,7 +2,7 @@ from macpacking.algorithms.online import NextFit as NextFit_Online, FirstFit as 
 from macpacking.algorithms.offline import NextFit as NextFit_Offline, FirstFit as FirstFit_Offline, BestFit as BestFit_Offline, WorstFit as WorstFit_Offline
 from macpacking.model import Online, Offline
 from benchmarking.ExecutionTimeBenchmark import ExecutionTimeBenchMark
-# from benchmarking.Plotter import Plotter
+# from Plotter import Plotter
 
 CASES = ['./_datasets/binpp/N1C1W1', './_datasets/binpp/N2C1W1', './_datasets/binpp/N3C1W1',
          './_datasets/binpp/N4C1W1', './_datasets/jburkardt/p01_c.txt', './_datasets/jburkardt/p04_c.txt']
@@ -15,7 +15,7 @@ def main():
 
     bench = ExecutionTimeBenchMark()
     ''' Outputs JSON file '''
-    bench.doBenchMark(CASES, CANADIATES)
+    bench.doBenchMark(CASES, CANADIATES, areWeightsSorted=True)
 
     ''' 
     Comment the doBenchMark function and uncomment code below as well as the Plotter import

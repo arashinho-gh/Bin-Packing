@@ -189,7 +189,9 @@ class RefinedFirstFit(Online):
         return fit
         
     def _process(self, capacity: int, stream: NomralizedWeightSet) -> Solution:
+        
         solution = [([],0)]
+        # print(stream)
         for i in stream:
             ''' compare the weight to each heurestic and place it its corresponding class'''
             if i[1] == "A":

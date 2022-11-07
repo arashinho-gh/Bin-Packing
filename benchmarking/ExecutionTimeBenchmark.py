@@ -1,14 +1,15 @@
 from pyperf import BenchmarkSuite
-from benchmark import BenchmarkSpace, run_benchmark
+from benchmarking.benchmark import BenchmarkSpace, run_benchmark
+
 
 class ExecutionTimeBenchMark():
-    
-    def doBenchMark(self, CASES, CANADIATES):
+
+    def doBenchMark(self, CASES, CANADIATES, areWeightsSorted=False):
         bm = BenchmarkSpace()
         bm.with_cases(CASES)
         bm.with_strategies(CANADIATES)
-        run_benchmark(bm)
-    
+        run_benchmark(bm, areWeightsSorted=areWeightsSorted)
+
     def extract_observations(self, bench_file: str):
         suite = BenchmarkSuite.load(bench_file)
         result = {}
@@ -17,4 +18,3 @@ class ExecutionTimeBenchMark():
             observations = list(bench.get_values())
             result[context] = observations
         return result
-

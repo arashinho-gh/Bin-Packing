@@ -25,7 +25,6 @@ class DatasetReader(ABC):
         def iterator():  # Wrapping the contents into an iterator
             for w in weights:
                 yield w  # yields the current value and moves to the next one
-
         return (capacity, iterator())
     
     @abstractmethod
@@ -56,7 +55,7 @@ class JburkardtReader(DatasetReader):
     def __init__(self, files : list[str]) -> None:
         self.__files = []
         for filename in files:   
-            if not path.exists(filename):
+            if not path.exists("./_datasets/jburkardt/" + filename):
                 raise ValueError(f'Unkown file [{filename}]')
             self.__files.append(filename)
         ''' Contains all the data from the files (capacity, solution, weights) '''
@@ -64,7 +63,7 @@ class JburkardtReader(DatasetReader):
 
     def _load_data_from_disk(self) -> WeightSet:
         for filename in self.__files:
-            with open(filename, 'r') as reader:
+            with open("./_datasets/jburkardt/" + filename, 'r') as reader:
                 ''' get file type (c, w, s)'''
                 data_type = filename.split("_")[-1].split(".")[0]
 
@@ -73,7 +72,6 @@ class JburkardtReader(DatasetReader):
                 line = reader.readline().strip()
                 if data_type == "c":
                     self.data["capacity"] = int(line)
-                    capacity = int(line)
                 ''' gets all the data at each line and stops when we reach an empty line '''
                 while len(line) > 0:
                     file_data.append(int(line))
@@ -82,11 +80,10 @@ class JburkardtReader(DatasetReader):
 
                 if data_type == "w":
                     self.data["weights"] = file_data
-                    weights = file_data
                 elif data_type == "s":
                     self.data["solution"] = file_data
                 
-        return (capacity, weights)
+        return (self.data['capacity'], self.data['weights'])
 
 class Normalized_reading():
     '''Read problem description according to the BinPP format'''
@@ -105,4 +102,8 @@ class Normalized_reading():
                     self.weights[i].append("C")
                 elif self.weights[i][0] < self.capacity//3:
                     self.weights[i].append("D")
+                    
+            # def iterator():  # Wrapping the contents into an iterator
+            #     for w in self.weights:
+            #         yield w  # yields the current value and moves to the next one
             return (self.capacity, self.weights)
