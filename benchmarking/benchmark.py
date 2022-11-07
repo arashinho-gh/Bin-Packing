@@ -34,7 +34,8 @@ class BenchmarkSpace():
         self.__metrics.extend(metrics)
         return self
 
-    def metricBench(self, dic, metrics, algo_name, algo_type, numOfWeights, binpacker):
+    def metricBench(self, dic, metrics, algo_name,
+                    algo_type, numOfWeights, binpacker):
         for metric in metrics:
             dic[metric] = dic.get(metric, {})
             dic[metric][algo_type] = dic[metric].get(algo_type, {})
@@ -56,7 +57,8 @@ class BenchmarkSpace():
             # get all files in directory
             if 'binpp' in directory:
                 files = [
-                    f'{directory}/{f}' for f in listdir(directory) if isfile(join(directory, f))]
+                    f'{directory}/{f}' for f in
+                    listdir(directory) if isfile(join(directory, f))]
                 # generate random index in the files array
                 cases.append(files[0])
             elif 'jburkardt' in directory:
@@ -64,7 +66,8 @@ class BenchmarkSpace():
 
         return cases
 
-    def finalize(self, bench_type: str = "time", areWeightsSorted: bool = False):
+    def finalize(self, bench_type: str = "time",
+                 areWeightsSorted: bool = False):
         if bench_type == "time":
             result = []
         elif bench_type == "metric":
@@ -120,7 +123,8 @@ class BenchmarkSpace():
 
                 if bench_type == "time":
                     elem: SpaceElement = {
-                        'name': self.__build_name(strategy, nb_weights, capacity),
+                        'name': self.__build_name(strategy, nb_weights,
+                                                  capacity),
                         'strategy': strategy,
                         'weights': data[1],
                         'capacity': data[0],
@@ -129,11 +133,13 @@ class BenchmarkSpace():
                     result.append(elem)
                 elif bench_type == "metric":
                     self.metricBench(
-                        result, self.__metrics, strategy.__class__.__name__, strategy_type, nb_weights, binpacker)
+                        result, self.__metrics, strategy.__class__.__name__,
+                        strategy_type, nb_weights, binpacker)
 
         return result
 
-    def __build_name(self, strategy: Online | Offline, nb_weights: int, capacity: int) -> str:
+    def __build_name(self, strategy: Online | Offline,
+                     nb_weights: int, capacity: int) -> str:
         type_ = ""
         for base in strategy.__class__.__bases__:
             type_ = (base.__name__)

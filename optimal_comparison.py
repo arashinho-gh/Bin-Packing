@@ -1,12 +1,11 @@
+from os.path import isfile, join
 from os import listdir
-from os.path import isfile, join, basename
-from macpacking.algorithms.online import NextFit
 from macpacking.reader import BinppReader
-from macpacking.reader import JburkardtReader
-from tests.test_reader import test_binpp_reader
 import matplotlib.pyplot as plt
-from macpacking.algorithms.online import NextFit as NextFit_on, FirstFit as FirstFit_on, BestFit as BestFit_on, WorstFit as WorstFit_on
-from macpacking.algorithms.offline import NextFit as NextFit_of, FirstFit as FirstFit_of, BestFit as BestFit_of, WorstFit as WorstFit_of
+from macpacking.algorithms.online import NextFit as NextFit_on, \
+    FirstFit as FirstFit_on, BestFit as BestFit_on, WorstFit as WorstFit_on
+from macpacking.algorithms.offline import NextFit as NextFit_of, \
+    FirstFit as FirstFit_of, BestFit as BestFit_of, WorstFit as WorstFit_of
 from macpacking.algorithms.baseline import BenMaier as baseline_of
 
 
@@ -16,7 +15,8 @@ from macpacking.algorithms.baseline import BenMaier as baseline_of
 #   - 500 objects (N4)
 #   - bin capacity of 120 (C2)
 #   - and weight in the [20,100] interval (W2)
-# We will consider the continuous margin of improvement for of each algorithm within each case
+# We will consider the continuous margin of improvement \
+# for of each algorithm within each case
 file = "_datasets/optimal_values/binpp.csv"
 format = "N4C2W2"
 CASES = './_datasets/binpp/N4C2W2'
@@ -24,7 +24,8 @@ CASES = './_datasets/binpp/N4C2W2'
 
 # We consider:
 #   The jburkardt dataset
-# We will consider the continuous margin of improvement for of each algorithm within each case
+# We will consider the continuous margin of improvement \
+# for of each algorithm within each case
 """file = "_datasets/optimal_values/jburkardt.csv"
 format="p_"
 CASES = './_datasets/jburkardt'"""
@@ -53,27 +54,24 @@ def list_case_files(dir: str) -> list[str]:
 def run_bench(cases: list[str], algos, optimal_solutions):
     dataset = []
     for case_index, case in enumerate(cases):
-        #print(f"===== Case {case_index} ======")
+        # print(f"===== Case {case_index} ======")
         optimal = int(optimal_solutions[case_index][1])
         dataset.append([case_index])
-       #print(f"optimal solution : {optimal}")
+        # print(f"optimal solution : {optimal}")
         for index, algo in enumerate(algos):
 
             data = BinppReader(case)
-            algo_type = None
-            algo_name = algo.__class__.__name__
             binpacker = algo
 
             if index < 4:  # online
-                algo_type = 'Online'
                 data = data.online()
 
             else:  # offline
-                algo_type = 'Offline'
                 data = data.offline()
 
             solution = binpacker.__call__(data)
-            #print(f"{algo_name} - ({algo_type}) : {len(solution)} - {len(solution) - optimal}")
+            # print(f"{algo_name} - ({algo_type}) : {len(solution)} - \
+            # {len(solution) - optimal}")
             dataset[case_index].append(len(solution)-optimal)
     for i in dataset:
         x = [i[0], i[0], i[0], i[0], i[0], i[0], i[0], i[0], i[0]]

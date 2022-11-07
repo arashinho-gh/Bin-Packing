@@ -1,9 +1,13 @@
-from macpacking.algorithms.online import NextFit as NextFit_on, FirstFit as FirstFit_on, BestFit as BestFit_on, WorstFit as WorstFit_on, RefinedFirstFit
+from macpacking.algorithms.online import NextFit as NextFit_on, FirstFit\
+    as FirstFit_on, BestFit as BestFit_on,\
+    WorstFit as WorstFit_on, RefinedFirstFit
 from benchmarking.MetricBenchmark import MetricsBenchmark
 
 
-CASES = ['./_datasets/binpp/N1C1W1', './_datasets/binpp/N2C1W1', './_datasets/binpp/N3C1W1',
-         './_datasets/binpp/N4C1W1', './_datasets/jburkardt/p01_c.txt', './_datasets/jburkardt/p04_c.txt']
+CASES = ['./_datasets/binpp/N1C1W1', './_datasets/binpp/N2C1W1',
+         './_datasets/binpp/N3C1W1',
+         './_datasets/binpp/N4C1W1', './_datasets/jburkardt/p01_c.txt',
+         './_datasets/jburkardt/p04_c.txt']
 CANADIATES = [NextFit_on(), FirstFit_on(), BestFit_on(),
               WorstFit_on(), RefinedFirstFit()]
 METRICS = ['num_of_bins_created',

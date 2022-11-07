@@ -2,14 +2,15 @@ import math
 from .. import Solution, WeightStream, NomralizedWeightSet
 from ..model import Online
 
+
 class NextFit(Online):
-    
+
     def __init__(self) -> None:
         super().__init__()
         self.num_of_bins_created = 0
         self.num_of_compares = 0
         self.num_of_times_checked_bins = 0
-        
+
     def _process(self, capacity: int, stream: WeightStream) -> Solution:
         bin_index = 0
         solution = [[]]
@@ -24,20 +25,21 @@ class NextFit(Online):
                 bin_index += 1
                 solution.append([w])
                 remaining = capacity - w
-                
+
         return solution
 
+
 class FirstFit(Online):
-    
+
     def __init__(self) -> None:
         super().__init__()
         self.num_of_bins_created = 0
         self.num_of_compares = 0
         self.num_of_times_checked_bins = 0
-        
+
     def _process(self, capacity: int, stream: WeightStream) -> Solution:
 
-        solution = [([],0)]
+        solution = [([], 0)]
         for w in stream:
             for i in range(len(solution) + 1):
                 ''' if weight doesn't fit in any previous bin add a new bin '''
@@ -51,20 +53,21 @@ class FirstFit(Online):
                 self.num_of_compares += 1
                 if bin_cap + w <= capacity:
                     _bin.append(w)
-                    solution[i] = (_bin,bin_cap + w)
+                    solution[i] = (_bin, bin_cap + w)
                     break
         return solution
 
+
 class BestFit(Online):
-    
+
     def __init__(self) -> None:
         super().__init__()
         self.num_of_bins_created = 0
         self.num_of_compares = 0
         self.num_of_times_checked_bins = 0
-        
+
     def _process(self, capacity: int, stream: WeightStream) -> Solution:
-        solution = [([],0)]
+        solution = [([], 0)]
         for w in stream:
             space_left = math.inf
             index = -math.inf
@@ -73,10 +76,14 @@ class BestFit(Online):
                 self.num_of_times_checked_bins += 1
                 _bin, bin_cap = solution[i]
                 self.num_of_compares += 1
-                if bin_cap + w <= capacity and capacity - (bin_cap + w) < space_left:
+                if bin_cap + w <= capacity and\
+                        capacity - (bin_cap + w) < space_left:
                     space_left = capacity - (bin_cap + w)
                     index = i
-            ''' if a bin of the tightest bin exists then added otherwise create a new bin '''
+            '''
+            if a bin of the tightest bin exists then added otherwise
+            create a new bin
+            '''
             if index >= 0:
                 _bin, bin_cap = solution[index]
                 _bin.append(w)
@@ -84,19 +91,20 @@ class BestFit(Online):
             else:
                 self.num_of_bins_created += 1
                 solution.append(([w], w))
-            
+
         return solution
-       
+
+
 class WorstFit(Online):
-    
+
     def __init__(self) -> None:
         super().__init__()
         self.num_of_bins_created = 0
         self.num_of_compares = 0
         self.num_of_times_checked_bins = 0
-        
+
     def _process(self, capacity: int, stream: WeightStream) -> Solution:
-        solution = [([],0)]
+        solution = [([], 0)]
         for w in stream:
             space_left = -math.inf
             index = -math.inf
@@ -105,10 +113,14 @@ class WorstFit(Online):
                 self.num_of_times_checked_bins += 1
                 _bin, bin_cap = solution[i]
                 self.num_of_compares += 1
-                if bin_cap + w <= capacity and capacity - (bin_cap + w) > space_left:
+                if bin_cap + w <= capacity and\
+                        capacity - (bin_cap + w) > space_left:
                     space_left = capacity - (bin_cap + w)
                     index = i
-            ''' if a bin of the tightest bin exists then added otherwise create a new bin '''
+            '''
+            if a bin of the tightest bin exists then
+            added otherwise create a new bin
+            '''
             if index >= 0:
                 _bin, bin_cap = solution[index]
                 _bin.append(w)
@@ -116,19 +128,20 @@ class WorstFit(Online):
             else:
                 self.num_of_bins_created += 1
                 solution.append(([w], w))
-            
-        return solution  
-    
+
+        return solution
+
+
 class WorstCase(Online):
-    
+
     def __init__(self) -> None:
         super().__init__()
         self.num_of_bins_created = 0
         self.num_of_compares = 0
         self.num_of_times_checked_bins = 0
-        
+
     def _process(self, capacity: int, stream: WeightStream) -> Solution:
-        solution = [([],0)]
+        solution = [([], 0)]
         index = 0
         for w in stream:
             self.num_of_bins_created += 1
@@ -140,60 +153,63 @@ class RefinedFirstFit(Online):
 
     def __init__(self) -> None:
         super().__init__()
-        self.A=[]
-        self.B=[]
-        self.C=[]
-        self.D=[]
+        self.A = []
+        self.B = []
+        self.C = []
+        self.D = []
         self.num_of_bins_created = 0
         self.num_of_compares = 0
         self.num_of_times_checked_bins = 0
-    
-    def compare(self,capacity, i):
+
+    def compare(self, capacity, i):
         fit = 0
         """ check if the value will fit in the A class"""
-        if len(self.A) > 1 and fit==0:
+        if len(self.A) > 1 and fit == 0:
             for k in self.A:
                 self.num_of_compares += 1
-                self.num_of_times_checked_bins +=1
+                self.num_of_times_checked_bins += 1
                 if sum(k) + i[0] <= capacity:
                     k.append(i[0])
                     fit += 1
                     break
         """ check if the value will fit in the B class"""
-        if len(self.B) > 1 and fit==0:
+        if len(self.B) > 1 and fit == 0:
             for k in self.B:
                 self.num_of_compares += 1
-                self.num_of_times_checked_bins +=1
+                self.num_of_times_checked_bins += 1
                 if sum(k) + i[0] <= capacity:
                     k.append(i[0])
                     fit += 1
                     break
         """ check if the value will fit in the C class"""
-        if len(self.C) > 1 and fit==0:
+        if len(self.C) > 1 and fit == 0:
             for k in self.C:
                 self.num_of_compares += 1
-                self.num_of_times_checked_bins +=1
+                self.num_of_times_checked_bins += 1
                 if sum(k) + i[0] <= capacity:
                     k.append(i[0])
                     fit += 1
                     break
         """ check if the value will fit in the D class"""
-        if len(self.D) > 1 and fit==0:
+        if len(self.D) > 1 and fit == 0:
             for k in self.D:
                 self.num_of_compares += 1
-                self.num_of_times_checked_bins +=1
+                self.num_of_times_checked_bins += 1
                 if sum(k) + i[0] <= capacity:
                     k.append(i[0])
                     fit += 1
                     break
         return fit
-        
+
     def _process(self, capacity: int, stream: NomralizedWeightSet) -> Solution:
-        
-        solution = [([],0)]
+
+        solution = [([], 0)]
         # print(stream)
         for i in stream:
-            ''' compare the weight to each heurestic and place it its corresponding class'''
+            '''
+            compare the weight to each heurestic
+            and place it its corresponding class
+            '''
             if i[1] == "A":
                 fit = self.compare(capacity, i)
                 if fit == 0:
@@ -214,8 +230,8 @@ class RefinedFirstFit(Online):
                 if fit == 0:
                     self.D.append([i[0]])
                     self.num_of_bins_created += 1
-                    
-        data=self.A+self.B+self.C+self.D
+
+        data = self.A+self.B+self.C+self.D
         for k in range(len(data)-1):
             solution.append((data[k], sum(data[k])))
-        return(solution)
+        return (solution)

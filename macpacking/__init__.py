@@ -9,5 +9,5 @@ WeightStream = (int, Iterator[int])
 # Solution as a list of bins, each one being a list of objects
 Solution = list[list[int]]
 
-#NormalizedWeightSet is used to classify each weight with its heurestics
-NomralizedWeightSet = (int,list[int,str])
+# NormalizedWeightSet is used to classify each weight with its heurestics
+NomralizedWeightSet = (int, list[int, str])
